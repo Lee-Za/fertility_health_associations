@@ -496,6 +496,10 @@ numlabel vcohabsb, add
 tab cohabs_bio
 
 
+*SEEING KIDS
+* crn16kx: How often do you see your child? 
+
+
 ********************************************************************************
 ********************************************************************************
 *****+--------------------------------------------------------------------------
@@ -864,20 +868,6 @@ recode k8agegroup (.=0) (1/4=0) (5=1), gen(k8_agegroup5)
 recode k9agegroup (.=0) (1/4=0) (5=1), gen(k9_agegroup5)
 recode k10agegroup (.=0) (1/4=0) (5=1), gen(k10_agegroup5)
 
-*NUMBER OF KIDS PER AGEGROUP OVERALL
-egen sum_allk_agegroup1 = sum(nk_agegroup1)
-egen sum_allk_agegroup2 = sum(nk_agegroup2)
-egen sum_allk_agegroup3 = sum(nk_agegroup3)
-egen sum_allk_agegroup4 = sum(nk_agegroup4)
-egen sum_allk_agegroup5 = sum(nk_agegroup5)
-label var sum_allk_agegroup1 "0-5"
-label var sum_allk_agegroup2 "6-10"
-label var sum_allk_agegroup3 "11-14"
-label var sum_allk_agegroup4 "15-18"
-label var sum_allk_agegroup5 "19-30"
-*Visualize distribution
-graph use "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph-kids_per_agegroup.gph"
-
 
 *NUMBER OF KIDS IN AGEGROUPS PER PARENT
 *number of kids in agegroup 1
@@ -914,13 +904,20 @@ recode nk_agegroup5 (1/10=1), gen(hask_agegroup5)
 label var hask_agegroup5 "has at least 1 kid in agegroup 5: full aged 19-30 years"
 tab hask_agegroup5
 
-*SEX OF CHILDREN: 
-tab ehc7k1g
-*Dummy: at least 1 daughter
-generate daughter = 1 if ehc7k1g==2 | ehc7k2g==2 | ehc7k3g==2 | ehc7k4g==2 | ehc7k5g==2 | ehc7k6g==2 | ehc7k7g==2 | ehc7k8g==2 | ehc7k9g==2 | ehc7k10g==2  
-label var daughter "has at least one daughter"
-recode daughter (.=0)
-tab daughter parents
+
+*NUMBER OF KIDS PER AGEGROUP OVERALL
+egen sum_allk_agegroup1 = sum(nk_agegroup1)
+egen sum_allk_agegroup2 = sum(nk_agegroup2)
+egen sum_allk_agegroup3 = sum(nk_agegroup3)
+egen sum_allk_agegroup4 = sum(nk_agegroup4)
+egen sum_allk_agegroup5 = sum(nk_agegroup5)
+label var sum_allk_agegroup1 "0-5"
+label var sum_allk_agegroup2 "6-10"
+label var sum_allk_agegroup3 "11-14"
+label var sum_allk_agegroup4 "15-18"
+label var sum_allk_agegroup5 "19-30"
+*Visualize distribution
+graph use "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph-kids_per_agegroup.gph"
 
 
 
@@ -950,44 +947,57 @@ tab crn29i3
 gen parentstress = (crn11i1 + crn11i6 + crn47i1 + crn47i2 + crn47i3 + crn47i4 + crn47i5 + crn29i1 + crn29i2 + crn29i3)
 label var parentstress "sum parenting stress = parenting burden+pressure+worries"
 twoway (scatter hpcs parentstress) (lpolyci hpcs parentstress) (lpoly hmcs parentstress)
-twoway (scatter hpcs parentstress) (lpolyci hpcs parentstress if fem==1) (lpoly hpcs parentstress if fem == 0)
+twoway (scatter hpcs parentstress, jitter(20)) (lpolyci hpcs parentstress if fem==1) (lpoly hpcs parentstress if fem == 0)
 sum parentstress
 replace parentstress = round(parentstress, 0.1)
 *DUMMY for high parentstress
 recode parentstress (1/25 = 0) (26/50 = 1), gen(parentstress_high)
 label var parentstress_high "high levels of parenting stress/pressure/worries"
 
-*COPARENT: relationship between children and coparent
-*crn48k*
 
-*PROBLEMS and discussions with coparent regarding parenting
-*****|crn33p* (parenting problems /discussions with coparent)
+*SATISFACTION with general childcare situation for child 1-10
+*10 step likert scale, ok to keep as interval scale?
+tab crn15k1 
+* calculation average satisfaction over 1-10 kids
+egen rowmiss_childcare =rowmiss(crn15k1-crn15k10)
+gen rowanswers_childcare = (10 - rowmiss_childcare)
+egen rowtotal_childcare = rowtotal(crn15k1-crn15k10)
+gen childcare_sat_avg = rowtotal_childcare / rowanswers_childcare
+tw (scatter hmcs childcare_sat_avg, jitter(20)) (lpoly hpcs childcare_sat_avg) (lpolyci hmcs childcare_sat_avg)
 
-*BURDEN of infants/toddlers
-*crn26k* (has infant/toddler, burdened by childs sleeping behaviour at night?)
-*crn28k* (has infant/toddler, burdened by crying  etc.?)
 
+*PARENTING SUPPORT FROM PARTNER
 *parenting support and appreciation from partner 
 tab crn20i5
 tab crn20i6
-gen parentsupportpart = (crn20i5+crn20i6)/2
-label var parentsupportpart "sum: parenting support and appreciation from partner"
-tab parentsupportpart
-sum parentsupportpart
-gen supportpart=parentsupportpart-1
+tw (scatter crn20i5 crn20i6, jitter(30)) (lfit crn20i5 crn20i6)
+gen parentsupport_partner = (crn20i5+crn20i6)
+label var parentsupport_partner "sum: parenting support and appreciation from partner"
+tab parentsupport_partner
+sum parentsupport_partner
+*mean=8.9
+*Dummy for above average support from partner
+gen parentsupport_partner_high = parentsupport_partner 
+recode parentsupport_partner_high (2/8=0) (9/10=1)
+*gender differences
+tab parentsupport_partner_high fem, col
+
+
+*PARENTING SUPPOERT FROM OTHERS 
 *social support in child rearing: people looking after child / giving advice
 tab crn30i1
 tab crn30i2
-gen parentsupportsoc = (crn30i1+crn30i2)/2
-label var parentsupportsoc "sum: parenting support, looking after child / giving advice"
-tab parentsupportsoc
-sum parentsupportsoc
-gen supportsoc=parentsupportsoc-1
-*SUM OF PARENTSUPPORT
-gen parentsupport=(supportsoc+supportpart)/2
-
-*satisfaction with childcare situation for child 1-10
-tab crn15k1
+gen parentsupport_social = (crn30i1+crn30i2)
+label var parentsupport_social "sum: parenting support, looking after child / giving advice"
+tab parentsupport_social
+sum parentsupport_social
+*mean=7.2
+*age at first birth differences
+tw (lfit parentsupport_social age_fbirth) (scatter parentsupport_social age_fbirth, jitter(33))
+*Dummy for above average support from others
+gen parentsupport_social_high = parentsupport_social 
+recode parentsupport_social_high (2/7=0) (8/10=1)
+tab parentsupport_social_high fem, col
 
 
 
@@ -999,38 +1009,22 @@ tab crn15k1
 tab east
 
 *EDUCATION
+*years of education
+tab yeduc
+tw (scatter yeduc hpcs, jitter(33)) (lfit yeduc hpcs) (lfit yeduc hmcs)
+*Dummy for Hoschschulabschluss
 tab casmin
-recode casmin (0=.) (2/3=1 "1 kein Abschluss/Hauptschulabschluss") (4/5=2 "2 Mittlere Reife") (6/7=3 "3 Fachhochschulreife/Abitur") (8/9=4 "4 Fachhochschulabschluss/Hochschulabschluss"), gen(edu) 
-**Dummys: haupt, real, abi, uni - automatische 0/1 Codierung, automatisch durchnummeriert
-tab edu, gen(edu_dum)
-rename edu_dum1 haupt
-rename edu_dum2 real
-rename edu_dum3 abi
-rename edu_dum4 uni
-label var haupt "Kein Bildungsabschluss oder Hauptschulabschluss" 
-label var real "Mittlere Reife"
-label var abi "Fachhochschulreife/Abitur"
-label var uni "Hochschulabschluss"
-tab edu 
+recode casmin (0/7 = 0 "no university degree") (8/9 = 1 "university degree"), gen(edu_high) 
+tab edu_high
+
 
 *OCCUPATIONAL STATUS
-*Dummys: current acitivity status
+*Dummy: employed vs. unemployed
 tab casprim
-recode casprim (1/8 14/16=1 "1 schooling/apprenticeship/university or marginally employed") (19=2 "2 not employed but seeking job") (17 20/22=3 "3 not employed: stay at home, retired, others") (12=4 "4 part-time employed") (11=5 "5 self-employed") (10=6 "6 full-time employed"), gen(occupation) 
-tab occupation, gen(occupation_dum) 
-rename occupation_dum1 scho
-rename occupation_dum2 seek
-rename occupation_dum3 home
-rename occupation_dum4 part
-rename occupation_dum5 self
-rename occupation_dum6 full
-label var scho "schooling (school apprenticeship university) or marginally employed"
-label var seek "not employed but seeking job"
-label var home "not employed: stay at home, retired, others"
-label var part "part-time employed"
-label var self "self-employed"
-label var full "full-time employed"
-tab occupation
+recode casprim (1/8 14/22 =0 "0 unemployed / marginally/occasionally employed / retired / parenatl leave etc.") (10/12=1 "1 full time/part-time employed/self-employed"), gen(employed) 
+label var employed "employment status"
+tab employed
+
 
 *OCCUPATIONAL PRESTIGE
 *siops: Standard International Occupational Prestige Scale weist Berufen einen empirisch ermittelten Prestigewert zu
@@ -1043,13 +1037,23 @@ tab isei
 sum isei
 gen isei0=isei-12
 
+
 *INCOME per month
 *personal net income
 sum incnet
+hist incnet
+*drop outliers ?
+*drop if incnet == 34500
+
 *household net imcome
 sum hhincnet
+hist hhincnet
+*drop outliers ?
+*drop if hhincnet == 50000 | 30000 | 16000 | 15400 ....
+tw (scatter hpcs incnet, jitter(33)) (lpolyci hpcs incnet) (lpoly hpcs hhincnet)
+graph box hhincnet incnet
 
-*CHILDHOOD SOES
+
 
 *MIGRATION
 tab migstat
@@ -1060,7 +1064,7 @@ numlabel vmigstat, add
 tab migstat
 
 
-*Dummy: experienced financial problems
+*Dummy: experienced financial hardship
 tab cle1i1
 gen moneystress = cle1i1
 label var moneystress "ever had big financial problems, dept, insolvency" 
@@ -1071,6 +1075,7 @@ label var moneystress "ever had big financial problems, dept, insolvency"
 *****+--------------------------------------------------------------------------
 *Dummies: current lifestyle "single, lat, nel, ehe" (lat living apart together, nel nicht eheliche lebensgemeinschaft)
 tab relstat
+tw (scatter hpcs relstat, jitter(33)) (lpoly hpcs relstat) (lpoly hmcs relstat)  
 recode relstat (1 6 9=0 "1 Single") (2 7 10=1 "2 LAT") (3 8 11=2 "3 NEL") (4 5=3 "4 Ehe") , gen(rel) 
 tab rel, gen(rel_dum)
 rename rel_dum1 single
@@ -1082,7 +1087,12 @@ label var lat "LAT living apart together"
 label var nel "NEL nicht eheliche Lebensgemeinschaft"
 label var ehe "Ehe"
 tab rel
-recode relstat (4=1 "Cohabition with spouse") (1/3=0) (5/11=0), gen(marcohab)
+tw (lpoly hpcs rel) (lpoly hmcs rel) (scatter hpcs rel, jitter(33)) (scatter hmcs rel, jitter(33))
+
+*Dummy: married & cohab VS single & lat
+
+recode relstat (3/4=1 "Cohabition with spouse") (1/3=0) (5/11=0), gen(marcohab)
+
 
 
 *Duration of current relationship 

@@ -1,185 +1,12 @@
 ********************************************************************************
 ********************************************************************************
 *****+--------------------------------------------------------------------------
-*****| Do-File zur Masterarbeit: Fertility / Parity and Health                            
-*****|
+*****| Do-File 2 zur Masterarbeit:                         
+*****| Examining the Relationship between Fertility Patterns and Midlife Health in Germany 
 *****+--------------------------------------------------------------------------	
 *****|
 *****| Author:	 Lisa-Maria Keck
-*****| Abgabe:	 xx.xx.xxxx
-*****+--------------------------------------------------------------------------
-********************************************************************************
-********************************************************************************
-********************************************************************************
-*****+--------------------------------------------------------------------------
-*****| Variables Overview
-*****+--------------------------------------------------------------------------
-*****|VARIABLES OF INTEREST Health:
-*****|hlt1 hlt7 hlt15 hlt16 hlt17i1 sat6 hlt17i2 hlt17i3 hlt17i4 hlt17i5 hlt17i6 hlt17i7
-*****|General health: 				hlt1	-->	gh
-*****|Vitality:						per4i4 	-->	vt
-*****|Social Functioning: 			hlt17i7	--> sf
-*****|Physical Pain					hlt17i2 -->	pp
-*****|Physical functioning 1:		hlt15 	-->	pf1
-*****|Physical functioning 2:		hlt16 	-->	pf2
-*****|Physical functioning sum:				--> pf
-*****|Role problems, physical 1:	hlt17i3 --> pr1
-*****|Role problems, physical 2:	hlt17i4 --> pr2
-*****|Role problems, physical sum:			--> pr
-*****|Mental health 1:				hlt17i1 --> mh1
-*****|Mental health 2:				per2i9 	--> mh2
-*****|Mental health sum:					--> mh
-*****|Role problems, mental 1:		hlt17i5 --> mr1 
-*****|Role problems, mental 2:		hlt17i6 --> mr2 
-*****|Role problems, mental sum:			--> mr
-*****|
-*****|
-*****|--------------------------------------------------------------------------
-*****|INDEPENDENT VARIABLES, PARITY: 
-*****|Number of all kids:			nkids 
-*****|Number of all kids alive: 	nkidsalv 
-*****|Number of all bio kids:		nkidsbio
-*****|Number of all bio kids alive: nkidsbioalv
-*****|Bio kids with partner alive:	nkidspalv
-*****|Partners bio kids alive:		pnkidsbioalv
-*****|anchor/partner is pregant:	pregnant
-*****|Childless:					nokids nokids_parents nokids_cohabs
-*****|
-*****|Kids lived in household: 		childmrd nochildmrd	(main residence)
-*****|Years of cohabition (sum):	livk0_7
-*****|
-*****|
-*****|--------------------------------------------------------------------------
-*****|CO-VARIABLES KIDS & PARENTING:
-*****|Sex of child:					ehc7k*g 
-*****|Type of chidlren 1-10:		k*type ehc9k*
-*****|Age of children 1-10:			k*age
-*****|Year of childs birth: 		ehc8k*y
-*****|Dead child (year of death):	ehc11k* ehc11k*y
-*****|
-*****|ykage (age of anchor's youngest child living with anchor in months)
-*****|ykid (position of anchor's youngest child)
-*****|
-*****|crn31k* (general health of child)
-*****|
-*****|Kids living with anchor:		nkidsliv
-*****|Bio Kids living with anchor:	nkidsbioliv
-*****|Bio kids with partner living:	nkidspliv
-*****|Where is child * 1-15 living:	ehc10k* 
-*****|(Where is child * 1-15 living:currliv, currliv_detail (aus Datensatz biochild)
-*****|
-*****|crn16k* (155. how often do you see child * who is not living with you (exclusively), daily - contact never established)
-*****|crn13k* crn14k* (who takes care of child in morning and afternoon)
-*****|
-*****|crn64k* (not living together with other parent, child under 16 living with other paretn, but regular contact
-*****|crn65k* (s.o. how many nights per month?)
-*****|crn23k* (seperated from partner: how often in touch with child *s other parent)
-*****|crn19i* (paretning goals, what do you want to tech your child?)
-*****|crn47i* (seriousness / stress / expectations regarding own parenting skills)
-*****|crn29i* (overprotectiveness, worries)
-*****|crn32i* (sarifying for children)
-*****|crn11i* (stress of life with child)
-*****|crn30i* (social support in child rearing)
-*****|crn20i* (support and appreciation from partner)
-*****|crn48k* (relationship between children and coparent)
-*****|crn33p* (parenting problems /discussions with coparent)
-*****|crn15k* (satisfaction with childcare situation)
-*****|
-*****|crn2k* (new child since wave 6, complications at birth?)
-*****|crn3k* (ne birth, by c-section?)
-*****|crn37k* (has infant/toddler, was child breastfed?)
-*****|crn26k* (has infant/toddler, burdened by childs sleeping behaviour at night?)
-*****|crn28k* (has infant/toddler, burdened by crying  etc.?)
-*****|crn10k* (infant/toddler, how is the child behaving?)
-*****|crn43k* (infant/toddler, childs personality)
-*****|crn45k* (preschool child, leisure activities with child)
-*****|.... there is A LOT for every age group
-*****|
-*****|
-*****|Kids Agegroups: CODEBOOK PAGE 51 VARIABELS NOT FOUND
-*****|ag1k* (new child after previous wave, 1=child alive and newly born after previous wave, max 1 year before wave 7)
-*****|ag2k* (infants, 1= child alive and born in the field start year or year thereafter)
-*****|ag3k* (toddlers, 1= alive and born 1 or 2 years before the field start year)
-*****|ag4k* (pre school, 1= born 3-5 years before wave 7)
-*****|ag5k* (aged 6-7)
-*****|ag6k* (children under 16)
-*****|ag7k* (minors, under 18)
-*****|ag8k* (chidlren under 21)
-*****|
-*****|
-*****|
-*****|CO-VARIABLES FERTILITY
-*****|frt5 (how many children anchor would like to have altogether)
-*****|frt26 (how many will you realistically have?)
-*****|frt27 frt28 (will you realistically have more children in addition to your currentn children?)
-*****|frt7 frt8(intend to have another child within the next 2 years)
-*****|frt9 (how old will you be realistically when having your first child)
-*****|frt25i* (how negativ/positive does being a parent affect your education/hobbies/social contacts/partnership?)
-*****|frt13i* (reasons against having children) esp. frt13i1 (health does not permit it)
-*****|... alle frt Variablen sind drin
-*****|
-*****|
-*****|
-*****|CO-VARIABLES HEALTH & STRESS:
-*****|infertile (anchor/partner is infertile)
-*****|hlt10 (currentlysmoking), hlt11i1 hlt11i2 hlt11i3 (smoking how many of)
-*****|hlt12m (month of giving up smoking) hlt12y (year of giving up smoking)
-*****|hlt13 (how often drinking alcohol), hlt14 (last month: how often drank 5+ alcoholic beverages on one occasion)
-*****|cle1i* (experienced financial problems, illness/accidents, robbery, violence, sexual assault, bullying), cle2i* (events happened during last 2 years)
-*****|cla11 (general health during childhood), cla13 (smoking, drinking, illness of guardian in childhood)
-*****|
-*****|
-*****|
-*****|
-*****|
-*****|
-*****|CO-VARIABLES SOCIODEMOGRAPHY:
-*****|cohort: 						cohort
-*****|genrated date of birth:		dob*_gen
-*****|age:							age
-*****|generated sex:				sex_gen 
-*****|birthcountry:					cob
-*****|living in east germany:		east 
-*****|Migrationssatus: migstatus 
-*****|
-*****|
-*****|
-*****|enrol (current enrollment in school or vocational training)
-*****|school (highest school degree), vocat (highest vocational degree), 
-*****|isced, isced2 or casmin? (ISECD-97, int. standard classification of education, 2=including students), yeduc (years of education)
-*****|kldb2010 or isco08? (classification of occupation), siops or mps ? (prestige score, mps nicht gefunden)
-*****|egp (class schema, nicht gefunden) or isei (int. socio-economic index of occupational status)
-*****|casprim (surrent primary and secondary activity status), lfs (labor force status)
-*****|incnet, hhincnet (personal and household net income) hhincgcee or hhincoecd (net equivalence income according to GCEE or modified OECD scale)
-*****|
-*****|
-*****|Anchors Childhood: cla9 (financial situation at age 10), cla10 (book in household at age 10), 
-*****|
-*****|
-*****|
-*****|
-*****|
-*****|CO-VARIABLES PARTNER/RELATIONSHIPS: 
-*****|homosex (anchor ist homosexual)
-*****|relstat (relationship status), marstat (marital status), pmrd (partner lives in household main res.)
-*****|reldur (duration of current relationship), cohabdur (duration cohabitation), mardur (duration marriage)
-*****|np (number of previous partners), ncoh (number of previous partners cohabited with)
-*****|nmar (nunber of previous marriages)
-*****|meetdur (months of knowing current partner)
-*****|
-*****|
-*****|
-*****|CO-VARIABLES FAMILY/HOUSEHOLD:
-*****|npu14mr (number persons under 14 main residence), npo14mr (number persons over 14 main residence)
-*****|pmrd (partner lives in household main residence), mmrd, fmrd (mother, father living at anchors main residence), 
-*****|hhsizemrd (household size main residemce), hhcomp (household composition main residence),
-*****|
-*****|
-*****|
-*****|
-*****|
-*****|
-*****|anfŸgen: 
+*****| Abgabe:	 31.03.2022
 *****+--------------------------------------------------------------------------
 ********************************************************************************
 ********************************************************************************
@@ -199,7 +26,7 @@ global path_out "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/4 Analyse"
 capture log close						
 log using "$path_out/MA-create-Lisa-Maria-Keck.log", replace 
 
-use hps1 lsr1i4 crn37k* crn2k*i* lsr1i2 crn15k* crn48k* crn33p* crn20i* crn30i* crn11i* crn32i* crn29i* crn19i* crn47i* frt* ehc7k*g ehc9k* ehc8k*y ehc11k* cle1i* cle2i* ehc10k* pmrd np ncoh nmar meetdur hhsizemrd nkidspalv nkidsliv nkidsbioliv nkidspliv pnkidsbioalv cla* hlt7 hlt10 hlt11i1 hlt11i2 hlt11i3 hlt12m hlt12y hlt13 hlt14 hlt1 per4i4 hlt17i7 hlt17i2 hlt15 hlt16 hlt17i3 hlt17i4 hlt17i1 per2i9 hlt17i5 hlt17i6 id cohort sex_gen dob*_gen age east cob migstatus relstat marstat reldur cohabdur mardur infertile pregnant enrol school vocat isced isced2 casmin yeduc kldb2010 isco08 isei siops casprim lfs nkids nkidsbio nkidsalv nkidsbioalv k*age ykage ykid nkidsliv nkidsbioliv k*type childmrd npu14mr npo14mr pmrd hhcomp mmrd fmrd incnet hhincnet hhincgcee hhincoecd frt7 frt9 using "$path_in/pairfam_anchor7_copy", clear
+use hlt3 hlt4 hps1 lsr1i4 crn37k* crn2k*i* lsr1i2 crn15k* crn48k* crn33p* crn20i* crn30i* crn11i* crn32i* crn29i* crn19i* crn47i* crn22p* crn23k* frt* ehc7k*g ehc9k* ehc8k*y ehc11k* cle1i* cle2i* ehc10k* pmrd np ncoh nmar meetdur hhsizemrd nkidspalv nkidsliv nkidsbioliv nkidspliv pnkidsbioalv cla* hlt7 hlt10 hlt11i1 hlt11i2 hlt11i3 hlt12m hlt12y hlt13 hlt14 hlt1 per4i4 hlt17i7 hlt17i2 hlt15 hlt16 hlt17i3 hlt17i4 hlt17i1 per2i9 hlt17i5 hlt17i6 id cohort sex_gen dob*_gen age east cob migstatus relstat marstat reldur cohabdur mardur infertile pregnant enrol school vocat isced isced2 casmin yeduc kldb2010 isco08 isei siops casprim lfs nkids nkidsbio nkidsalv nkidsbioalv k*age ykage ykid nkidsliv nkidsbioliv k*type childmrd npu14mr npo14mr pmrd hhcomp mmrd fmrd incnet hhincnet hhincgcee hhincoecd frt7 frt9 using "$path_in/pairfam_anchor7_copy", clear
 *using "$path_in/pairfam_anchor7_copy", clear 
 
 
@@ -232,6 +59,27 @@ keep if missnumber==0
 *****|
 *****|HEALTH: Calculating the SF12-Scores
 *****|
+*****+--------------------------------------------------------------------------
+*****| Health Variables Overview
+*****+--------------------------------------------------------------------------
+*****|VARIABLES OF INTEREST Health:
+*****|hlt1 hlt7 hlt15 hlt16 hlt17i1 sat6 hlt17i2 hlt17i3 hlt17i4 hlt17i5 hlt17i6 hlt17i7
+*****|General health: 				hlt1	-->	gh
+*****|Vitality:						per4i4 	-->	vt
+*****|Social Functioning: 			hlt17i7	--> sf
+*****|Physical Pain					hlt17i2 -->	pp
+*****|Physical functioning 1:		hlt15 	-->	pf1
+*****|Physical functioning 2:		hlt16 	-->	pf2
+*****|Physical functioning sum:				--> pf
+*****|Role problems, physical 1:	hlt17i3 --> pr1
+*****|Role problems, physical 2:	hlt17i4 --> pr2
+*****|Role problems, physical sum:			--> pr
+*****|Mental health 1:				hlt17i1 --> mh1
+*****|Mental health 2:				per2i9 	--> mh2
+*****|Mental health sum:					--> mh
+*****|Role problems, mental 1:		hlt17i5 --> mr1 
+*****|Role problems, mental 2:		hlt17i6 --> mr2 
+*****|Role problems, mental sum:			--> mr
 *****+--------------------------------------------------------------------------
 *****|renaming items and reverse coding when necessary (increasing value = increasing health)
 *****+--------------------------------------------------------------------------
@@ -383,6 +231,8 @@ sum pcs hpcs mcs hmcs
 *Visualize
 *twoway (histogram hpcs if fem==0, color(blue)) (histogram hpcs if fem==1, color(pink)), legend(order(1 "Male" 2 "Female" ))
 
+label var hpcs "Physical Health Score"
+label var hmcs "Mental Health Score"
 
 
 ********************************************************************************
@@ -397,6 +247,8 @@ sum pcs hpcs mcs hmcs
 tab ehc11k1
 gen nkidsdead = ehc11k1 + ehc11k2 + ehc11k3 + ehc11k4 + ehc11k5 +ehc11k6 + ehc11k7 +ehc11k8 + ehc11k9 + ehc11k10
 tab nkidsdead
+*Deceased kids -->18
+gen deadkids = nkids-nkidsalv
 
 
 *Simple: parents vs. non-parents
@@ -496,8 +348,6 @@ numlabel vcohabsb, add
 tab cohabs_bio
 
 
-*SEEING KIDS
-* crn16kx: How often do you see your child? 
 
 
 ********************************************************************************
@@ -521,7 +371,7 @@ recode k9type (2/3=1) (4/9=0) (.=0), gen(k9dead)
 recode k10type (2/3=1) (4/9=0) (.=0), gen(k10dead)
 *gen nkidsdead=k1dead+k2dead+k3dead+k4dead+k5dead+k6dead+k7dead+k8dead+k9dead+k10dead
 
-*check number of non-biological kids --> 193. keeping them in analysis
+*check number of non-biological kids --> keeping them in analysis
 codebook k1type
 recode k1type (4 7=1) (2 3 5 6 8 9=0) (.=0), gen(k1nonbio)
 recode k2type (4 7=1) (2 3 5 6 8 9=0) (.=0), gen(k2nonbio)
@@ -581,6 +431,25 @@ label var nkidsalv4_p_dum4 "4+ chidlren"
 
 
 
+*More Detail: summarized cohabitation years as Indicator for Intensity of parentship
+*used different dataset: biochild.dta 
+*--> see dofile biochild_livk.do
+*Feed livk0_7 from extra dataset (master only 358, using only 4305, matched 1759)
+merge 1:1 id using "$path_in/biochild_livk_all_peranchor.dta", gen (merge_livk)
+tab merge_livk
+drop if merge_livk==2
+label var livk_all "sum of cohabition years: parents and their children"
+sum livk_all
+*check childless, recode chidless
+sum livk_all if nkidsalv == 0
+replace livk_all = . if nkidsalv == 0
+sum livk_all
+*version including childless (=0)
+gen livk_all_all = livk_all
+replace livk_all_all = 0 if livk_all_all == .
+label var livk_all_all "sum of cohabition years: parents and kids, including childless"
+
+
 ********************************************************************************
 ********************************************************************************
 *****+--------------------------------------------------------------------------
@@ -627,6 +496,15 @@ label define vnoyes 0"no" 1"yes"
 label values early_fbirth vnoyes
 tab early_fbirth
 
+
+sum age_fbirth if age_fbirth < 20 & sex_gen == 2
+*are 64 obs. enough?
+sum age_fbirth if age_fbirth < 21 & sex_gen == 2
+sum age_fbirth if age_fbirth < 25 & sex_gen ==1 
+* --> *better fem: 21  male: 25?
+
+
+
 *Age at last birth = Age at interview - Age of youngest child
 *Age of youngest child 
 gen kyage = ykage/12
@@ -659,9 +537,9 @@ tab late_fbirth
 *GENDER
 tab sex_gen
 recode sex_gen (1=0) (2=1), gen(fem)
-label define vfem 1"Female" 0"Male"
-label values fem vfem
-numlabel vfem, add
+label define lfem 1"Women" 0"Men"
+label values fem lfem
+numlabel lfem, add
 tab fem
 
 
@@ -764,6 +642,21 @@ recode sleep (1/5.5 = 0) (6/8 = 1) (8.5/12 = 0)
 label var sleep "sleeping 6-8h per night"
 tab sleep fem, col
 
+
+*OVERWEIGHT
+*no data on height, so no BMI
+sum hlt4
+tw (scatter hpcs hlt4) (lpoly hpcs hlt4 if fem==0) (lpoly hpcs hlt4 if fem==1) 
+egen weight_groups_f = cut(hlt4) if fem ==1,group(4)
+egen weight_groups_m = cut(hlt4) if fem ==0,group(4)
+* high weight women: 80-140kg (289 obs.)
+sum hlt4 if weight_groups_f == 3
+* high weight men: 95-165kg (255 obs.)
+sum hlt4 if weight_groups_m == 3
+*Dummy for high weight people
+gen weight_high = 1 if weight_groups_f == 3 | weight_groups_m == 3
+replace weight_high = 0 if weight_groups_f == 0 | weight_groups_m == 0 | weight_groups_f == 1 | weight_groups_m == 1 | weight_groups_f == 2 | weight_groups_m == 2  
+sum weight_high
 
 
 *****+--------------------------------------------------------------------------
@@ -1042,16 +935,14 @@ gen isei0=isei-12
 *personal net income
 sum incnet
 hist incnet
-*drop outliers ?
-*drop if incnet == 34500
+*drop outliers > 6000 (9 casees)
+replace incnet = . if incnet > 6000
 
 *household net imcome
 sum hhincnet
 hist hhincnet
-*drop outliers ?
-*drop if hhincnet == 50000 | 30000 | 16000 | 15400 ....
-tw (scatter hpcs incnet, jitter(33)) (lpolyci hpcs incnet) (lpoly hpcs hhincnet)
-graph box hhincnet incnet
+*drop outliers > 12000 (9 cases)
+replace hhincnet = . if hhincnet > 12000
 
 
 
@@ -1090,18 +981,23 @@ tab rel
 tw (lpoly hpcs rel) (lpoly hmcs rel) (scatter hpcs rel, jitter(33)) (scatter hmcs rel, jitter(33))
 
 *Dummy: married & cohab VS single & lat
-
-recode relstat (3/4=1 "Cohabition with spouse") (1/3=0) (5/11=0), gen(marcohab)
-
+recode rel (1/2=0 "0 Single or LAT") (3/4=1 "1 Married and/or Cohab"), gen(married_cohab)
 
 
-*Duration of current relationship 
+*Duration of current relationship in months / years
 sum reldur
+hist reldur
 generate relyears=reldur/12
+replace relyears = round(relyears, 1)
 label variable relyears "Duration of current relationship in years" 
 sum relyears
+tw (scatter hpcs relyears, jitter(33)) (lpoly hpcs relyears) (lpoly hmcs relyears) 
+hist relyears
+*browse if relyears > 29 & relyears != .
 *relationship of 41,3 years at age 43 possible?
+recode relyears (30/43 = .)
 
+*Dummy for (quasi) Single Parents married_cohab == 0
 
 
 ********************************************************************************
@@ -1111,6 +1007,8 @@ sum relyears
 *****|  Tidy up Dataset and save
 *****|
 *****+--------------------------------------------------------------------------
-drop k*agegroup k*_agegroup* k*age k*type k*dead k*nonbio reldur cohabdur mardur hhincgcee hhincoecd frt28 gh vt sf pp pf pf1 pf2 pr pr1 pr2 mh mh1 mh2 mr mr1 mr2 hps hms agg_hp agg_hm mh2 doby_gen dobm_gen meetdur hps1 cla12 frt30 hlt12* crn37* hhsizemrd npu14mr npo14mr mmrd fmrd pmrd hhcomp enrol school vocat isced isced2 casmin casprim lfs yeduc kldb2010 isco08 isei siops frt4* frt25i* np ncoh nmar crn11i1 crn11i6 crn47i1 crn47i2 crn47i3 crn47i4 crn47i5 crn29i1 crn29i2 crn29i3 lsr1i2 cla11 hlt10 hlt13 hlt14 hlt11i1 hlt11i2 hlt11i3 hlt1 per4i4 hlt17i7 hlt17i2 hlt15 hlt16 hlt17i3 hlt17i4 hlt17i1 per2i9 hlt17i5 hlt17i6 gh_z vt_z sf_z pp_z pf1_z pf2_z pf_z pr1_z pr2_z pr_z mh1_z mh2_z mh_z mr1_z mr2_z mr_z ehc7k* ehc8k* ehc9k* ehc10* ehc11* frt13* crn19* crn2k* crn15k* crn48k* crn33p*
+*drop redundant data
+drop k*agegroup k*_agegroup* k*age k*type k*dead k*nonbio reldur cohabdur mardur hhincgcee hhincoecd frt28 gh vt sf pp pf pf1 pf2 pr pr1 pr2 mh mh1 mh2 mr mr1 mr2 hps hms agg_hp agg_hm mh2 doby_gen dobm_gen meetdur hps1 cla12 frt30 hlt12* crn37* hhsizemrd npu14mr npo14mr mmrd fmrd pmrd hhcomp enrol school vocat isced isced2 casmin casprim lfs kldb2010 isco08 isei siops frt4* frt25i* np ncoh nmar crn11i1 crn11i6 crn47i1 crn47i2 crn47i3 crn47i4 crn47i5 crn29i1 crn29i2 crn29i3 lsr1i2 cla11 hlt10 hlt13 hlt14 hlt11i1 hlt11i2 hlt11i3 hlt1 per4i4 hlt17i7 hlt17i2 hlt15 hlt16 hlt17i3 hlt17i4 hlt17i1 per2i9 hlt17i5 hlt17i6 gh_z vt_z sf_z pp_z pf1_z pf2_z pf_z pr1_z pr2_z pr_z mh1_z mh2_z mh_z mr1_z mr2_z mr_z ehc7k* ehc8k* ehc9k* ehc10* ehc11* frt13* crn19* crn2k* crn15k* crn48k* crn33p*
 
-save "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/3 Daten/pairfam_anchor7_lmk.dta", replace 
+
+save "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/3 Daten/pairfam_anchor7_thesis.dta", replace 

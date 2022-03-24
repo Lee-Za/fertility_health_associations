@@ -28,9 +28,6 @@ use "$path_in/pairfam_anchor7_thesis.dta", clear
 capture log close						
 log using "$path_out/MA-analyse-Lisa-Maria-Keck.log", replace 
 
-*Paket estout inkl. esttab für die Generierung professioneller Tabellen installieren
-*sc install estout , replace
-
 
 ********************************************************************************
 ********************************************************************************
@@ -114,72 +111,79 @@ gen deadkids = nkids-nkidsalv
 tab nkidsbioalv
 tab nnonbiokid
 
+*Comparing Parity Versions
+pwcorr hpcs hmcs livk_all nkidsalv nkidsalv4_dum5, sig
 
 
 
 *****+--------------------------------------------------------------------------
-*****| COVARIABLES
+*****| Investigating & Reeducing Covariables
 *****+--------------------------------------------------------------------------
 
-*COMPARING MEANS OF CATEGORICAL DATA
-*physical health + soep and lifestly
-grmeanby married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, sum(hpcs)
-*physical health + parents related stuff
-grmeanby parents parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5, sum(hpcs)
-*physical health ALL
-grmeanby parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, xlabel(,grid) ylabel(,grid) sum(hpcs)
-
-
-*mental health + soep and lifestly
-grmeanby married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, sum(hpcs)
-*mental health + parents related stuff
-grmeanby parents parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5, sum(hpcs)
-*mental health ALL
-grmeanby parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, xlabel(,grid) ylabel(,grid) sum(hmcs)
-
-
-grmeanby parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, sum(hmcs)
-
-
-
-
-
-
-
-*CONTINOUS DATA
 *Income VS Household Income --> similar 
 tw (scatter hpcs incnet, msize(0.6)) (lfit hpcs incnet, lwidth(medthick)) (scatter hpcs hhincnet, msize(0.6)) (lfit hpcs hhincnet, lwidth(medthick))
 
 *Education
 tw (scatter hpcs yeduc, jitter(33)) (lfit hpcs yeduc) 
 
-*
+
+*COMPARING MEANS OF CATEGORICAL DATA
+*physical health 
+grmeanby parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, xlabel(,grid) ylabel(,grid) sum(hpcs)
+*mental health 
+grmeanby parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 parentstress_high parentsupport_partner_high parentsupport_social_high onek_bfed hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 married_cohab edu_high employed moneystress east smoking alc_often sport1 friends1 sleep weight_high h_childhood_good, xlabel(,grid) ylabel(,grid) sum(hmcs)
 
 
+*CORRELATION MATRIX + SIGNIFICANCE (siehe Github von Ben Jann)
+*ssc install palettes, replace
+*ssc install heatplot, replace
+
+*Parenting related Variables I
+pwcorr hpcs hmcs parentstress_high childcare_sat_avg parentsupport_partner_high parentsupport_social_high onek_bfed, sig
+*Parenting related Variables II
+pwcorr hpcs hmcs hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 livk_all, sig
+*Lifestyle Variables I
+pwcorr hpcs hmcs married_cohab relyears edu_high yeduc siops0 employed moneystress hhincnet east migstat, sig 
+*Lifestyle Variables II
+pwcorr hpcs hmcs smoking nsmoking_all alc_often alc_int  sport1 friends1 sleep weight_high h_childhood_good, sig
+pwcorr hpcs hmcs nsmoking_all sport1 friends1 sleep weight_high h_childhood_good, sig
+
+**check correlations again with full (slightly different) variable set for both scales
+pwcorr hpcs parentstress_high onek_bfed	 hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
+pwcorr hmcs parentstress_high married_cohab yeduc moneystress hhincnet friends1 childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
+
+*Heatplots 
+*physical
+quietly correlate hpcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
+matrix Physical = r(C)
+heatplot Physical, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
+*mental
+quietly correlate hmcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good
+matrix Mental = r(C)
+heatplot Mental, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
 
 
+*CORRELATION TABLE
+*PHYSICAL FEMALE/MALE
+estpost correlate hpcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 1
+eststo hpcs_fem
+estpost correlate hpcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 0
+eststo hpcs_male
+*MENTAL FEMALE/MALE
+estpost correlate hmcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 1
+eststo hmcs_fem
+estpost correlate hmcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 0
+eststo hmcs_male
+*Combine tables and save as one 
+esttab hpcs_fem hpcs_male hmcs_fem hmcs_male  using test2.rtf, replace b(2) label compress not
+*add missings and means?
 
 
-*****+--------------------------------------------------------------------------
-*****| CORRELATIONS
-*****+--------------------------------------------------------------------------
-
-
-
-
-
-*Description table with all DV and IV (Minimum, Maximum, Mittelwert und Standadabweichung)
-*ssc install estout , replace (Paket estout inkl. esttab für die Generierung professioneller Tabellen installieren)
-*Eststo stores, esttab creates table
-estpost sum hpcs hmcs nkidsalv5 age_fbirth smoking sport friends h_childhood cle1i1 edu occupation single nk_bfed if fem==1
-eststo t1
-estpost sum hpcs hmcs nkidsalv5 age_fbirth smoking sport friends h_childhood cle1i1 edu occupation single nk_bfed if fem==0
-eststo t2
-esttab t1 t2 using "$path_out/Tab1.rtf" , cells("min(fmt(0)) max(fmt(0)) mean(fmt(2)) sd(fmt(2))") nonumber label varwidth(30) modelwidth(5) replace 
-
-
-
-
+*FINAL SET OF COVARIABLES
+* hpcs: 
+* parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
+* hmcs: 
+* parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good
 
 
 

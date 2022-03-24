@@ -1010,5 +1010,6 @@ recode relyears (30/43 = .)
 *drop redundant data
 drop k*agegroup k*_agegroup* k*age k*type k*dead k*nonbio reldur cohabdur mardur hhincgcee hhincoecd frt28 gh vt sf pp pf pf1 pf2 pr pr1 pr2 mh mh1 mh2 mr mr1 mr2 hps hms agg_hp agg_hm mh2 doby_gen dobm_gen meetdur hps1 cla12 frt30 hlt12* crn37* hhsizemrd npu14mr npo14mr mmrd fmrd pmrd hhcomp enrol school vocat isced isced2 casmin casprim lfs kldb2010 isco08 isei siops frt4* frt25i* np ncoh nmar crn11i1 crn11i6 crn47i1 crn47i2 crn47i3 crn47i4 crn47i5 crn29i1 crn29i2 crn29i3 lsr1i2 cla11 hlt10 hlt13 hlt14 hlt11i1 hlt11i2 hlt11i3 hlt1 per4i4 hlt17i7 hlt17i2 hlt15 hlt16 hlt17i3 hlt17i4 hlt17i1 per2i9 hlt17i5 hlt17i6 gh_z vt_z sf_z pp_z pf1_z pf2_z pf_z pr1_z pr2_z pr_z mh1_z mh2_z mh_z mr1_z mr2_z mr_z ehc7k* ehc8k* ehc9k* ehc10* ehc11* frt13* crn19* crn2k* crn15k* crn48k* crn33p*
 
-
 save "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/3 Daten/pairfam_anchor7_thesis.dta", replace 
+
+exit

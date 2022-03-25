@@ -63,10 +63,12 @@ tab fem, sum(hpcs)
 sum hmcs
 tab fem, sum(hmcs)
 
-local mhp=r(mean)
+*histograms
 hist hpcs, percent graphregion(fcolor(white)) fcolor(navy) lcolor(white) lwidth(medthin) barwidth(1.5) xlabel(#10) ylabel(#5)
-
 hist hmcs, percent graphregion(fcolor(white)) fcolor(orange) lcolor(white) lwidth(medthin) barwidth(1.5) xlabel(#10) ylabel(#5)
+
+*boxplot
+graph box hpcs hmcs, by(fem)
 
 
 *****+--------------------------------------------------------------------------
@@ -149,18 +151,25 @@ pwcorr hpcs hmcs smoking nsmoking_all alc_often alc_int  sport1 friends1 sleep w
 pwcorr hpcs hmcs nsmoking_all sport1 friends1 sleep weight_high h_childhood_good, sig
 
 **check correlations again with full (slightly different) variable set for both scales
-pwcorr hpcs parentstress_high onek_bfed	 hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
+pwcorr hpcs parentstress_high onek_bfed	hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
 pwcorr hmcs parentstress_high married_cohab yeduc moneystress hhincnet friends1 childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
 
-*Heatplots 
-*physical
+*HEATPLOTS 
+*physical health and covariables
 quietly correlate hpcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
 matrix Physical = r(C)
 heatplot Physical, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
-*mental
+*mental health and covariables
 quietly correlate hmcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good
 matrix Mental = r(C)
 heatplot Mental, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
+
+*Predictors and Covariables
+quietly correlate hpcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all onel_bfed	hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good
+matrix Test = r(C)
+heatplot Test, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
+
+
 
 
 *CORRELATION TABLE

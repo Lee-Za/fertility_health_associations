@@ -21,7 +21,7 @@ clear all
 set more off	
 
 global path_in "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/3 Daten"  
-global path_out "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/4 Analyse" 
+global path_out "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik" 
 
 use "$path_in/pairfam_anchor7_thesis.dta", clear
 
@@ -95,7 +95,7 @@ histogram nkidsalv, frequency graphregion(fcolor(white)) fcolor(gray) lcolor(whi
 graph save Graph "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph - number ok kids alive per parent.gph", replace
 
 histogram nkidsalv4_parents, frequency graphregion(fcolor(white)) fcolor(gray) lcolor(white) barwidth(0.5) addlabel xtitle(Number of all children alive (only Parents)) xsize(2) ysize(2)
-graph save Graph "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph - number ok kids alive per parent.gph"
+graph save Graph "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph - number ok kids alive per parent.gph", replace
 
 *Cohabition Years vs. Number of Kids 1-4+
 tw (scatter hpcs livk_all_all) (lfitci hpcs livk_all_all, by(fem, compact))
@@ -105,9 +105,6 @@ tw (scatter hpcs nkidsalv4, jitter(5) msize(0.6)) (qfit hpcs nkidsalv4,  lwidth(
 *hmcs
 tw (scatter hmcs livk_all if livk_all < 75, msize(0.6)) (lfit hmcs livk_all if livk_all < 75, lwidth(medthick) by(fem, compact)) 
 tw (scatter hmcs nkidsalv4, jitter(5) msize(0.6)) (qfit hmcs nkidsalv4, lwidth(medthick) by(fem,compact))
-
-*Deceased kids -->18
-gen deadkids = nkids-nkidsalv
 
 *Non-bio kids --> 190 nonbiokids, 1 kid lost between nkidsbiolalive and nnonbiokid (died or what)
 tab nkidsbioalv
@@ -155,21 +152,14 @@ pwcorr hpcs parentstress_high onek_bfed	hask_agegroup1 hask_agegroup4 hask_agegr
 pwcorr hmcs parentstress_high married_cohab yeduc moneystress hhincnet friends1 childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good, sig
 
 *HEATPLOTS 
-*physical health and covariables
-quietly correlate hpcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
+*Pyhscial & mental health & covariables
+quietly correlate hpcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good hmcs
 matrix Physical = r(C)
-heatplot Physical, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
-*mental health and covariables
-quietly correlate hmcs parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good
-matrix Mental = r(C)
-heatplot Mental, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
-
+heatplot Physical, values(format(%9.3f) size(tiny)) color(ptol, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
 *Predictors and Covariables
-quietly correlate hpcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all onel_bfed	hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good
+quietly correlate hpcs fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all onek_bfed	 hask_agegroup1 hask_agegroup4 hask_agegroup5 married_cohab yeduc moneystress hhincnet childcare_sat_avg parentsupport_partner_high parentsupport_social_high employed nsmoking_all sport1 sleep weight_high h_childhood_good
 matrix Test = r(C)
-heatplot Test, values(format(%9.3f) size(tiny)) color(hcl, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
-
-
+heatplot Test, values(format(%9.3f) size(minuscule)) color(ptol, diverging intensity(.6)) aspectratio(1) xlabel(,labsize(vsmall) angle(45)) ylabel(,labsize(vsmall)) graphregion(fcolor(white)) lower nodiagonal
 
 
 *CORRELATION TABLE
@@ -184,11 +174,14 @@ eststo hmcs_fem
 estpost correlate hmcs parents cohabs_bio fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 nkidsalv4_dum1 nkidsalv4_dum2 nkidsalv4_dum3 nkidsalv4_dum4 nkidsalv4_dum5 livk_all parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 0
 eststo hmcs_male
 *Combine tables and save as one 
-esttab hpcs_fem hpcs_male hmcs_fem hmcs_male  using test2.rtf, replace b(2) label compress not
+esttab hpcs_fem hpcs_male hmcs_fem hmcs_male using "$path_out/test2.rtf", replace b(2) label compress not
 *add missings and means?
 
 
-*FINAL SET OF COVARIABLES
+
+*****+--------------------------------------------------------------------------
+*****| FINAL SET OF COVARIABLES
+*****+--------------------------------------------------------------------------
 * hpcs: 
 * parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
 * hmcs: 
@@ -232,7 +225,7 @@ by parents, sort : swilk hpcs
 by parents, sort : swilk hmcs
 
 *Two-sample t-test | H0=no difference | no significance --> H0 not rejected=>no difference
-ttest hpcs, by(parents)
+ttest hpcs, by(parents) 
 ttest hmcs, by(parents) unequal
 *nonparametric equivalent for t-test: Mann-Whitney-U test | H0=no difference | no significance --> H0 not rejected=>no difference
 *https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/mann.html
@@ -253,53 +246,193 @@ mean hmcs, over(cohabs)
 mean hmcs, over(cohabs_bio)
 
 
+*Testing Age of Children: having young kids vs. no kids (excluding other parents)
+tab hask_agegroup1
+*recoding to get parents with kid in agegroup x VS. childless
+replace hask_agegroup1 = 2 if parents == 0
+replace hask_agegroup2 = 2 if parents == 0
+replace hask_agegroup3 = 2 if parents == 0
+replace hask_agegroup4 = 2 if parents == 0
+replace hask_agegroup5 = 2 if parents == 0
+recode hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 (0 = .) (2 = 0)
+ttest hpcs, by(hask_agegroup1) 
+ttest hmcs, by(hask_agegroup1) unequal
 
 
+*comapring men and women 
+estpost correlate hpcs parents cohabs cohabs_bio has_infant hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 if fem == 1
+eststo a
+estpost correlate hpcs parents cohabs cohabs_bio has_infant hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 if fem == 0
+eststo b
+estpost correlate hmcs parents cohabs cohabs_bio has_infant hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 if fem == 1
+eststo c
+estpost correlate hmcs parents cohabs cohabs_bio has_infant hask_agegroup1 hask_agegroup2 hask_agegroup3 hask_agegroup4 hask_agegroup5 if fem == 0
+eststo d
+esttab a b c d using "$path_out/abcd.rtf", replace b(2) label compress not
+
+*REGRESSION FOR FATHERS
+*mental health
+reg hmcs cohabs if fem == 0
+reg hmcs cohabs married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good if fem == 0, beta
+
+
+reg hmcs cohabs employed married_cohab if fem == 0
+*physical health
+reg hpcs has_infant employed nsmoking_all if fem == 0
+*check how many father with young children have only 1 child
+tab hask_agegroup1 nkidsalv if fem == 0, row
+
+
+
+
+* hpcs: 
+* parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good
+* hmcs: 
+* parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 friends1 sleep weight_high h_childhood_good
+
+
+
+
+
+reg hpcs has_infant employed nsmoking_all if fem==0, beta
+ 
 
 ********************************************************************************
 ********************************************************************************
 *****+--------------------------------------------------------------------------
 *****|
-*****| MODEL 3: Optimum age at first birth
+*****| MODEL 2: Best Time Frame for first birth
 *****|
 *****+--------------------------------------------------------------------------
-*Visualization 
-grmeanby fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5, sum(hpcs)
 
-lpoly hpcs age_fbirth, name(g1p) graphregion(fcolor(white)) jitter(30) ci ytitle("Physical Health") msize(vtiny)
-graph save Graph "$path_out/g1p.gph", replace
-lpoly hpcs agegroup_fbirth, name(g1pg) graphregion(fcolor(white)) jitter(30) ci ytitle("Physical Health") msize(vtiny)
-graph save Graph "$path_out/g1pg.gph", replace
-lpoly hmcs age_fbirth, name(g1m) graphregion(fcolor(white)) jitter(30) ci ytitle("Mental Health") msize(vtiny)
-graph save Graph "$path_out/g1m.gph", replace
-lpoly hmcs agegroup_fbirth, name(g1mg) graphregion(fcolor(white)) jitter(30) ci ytitle("Mental Health") msize(vtiny)
-graph save Graph "$path_out/g1mg.gph", replace
-graph combine g1p g1pg g1m g1mg
-graph save Graph "$path_out/g1.gph", replace
-
-*Visualization over sex_gen
-*physical
-lpoly hpcs age_fbirth if fem==1, name(g1p_fem) graphregion(fcolor(white)) jitter(30) ci ytitle("Physical Health") msize(vtiny) title("Women")
-graph save Graph "$path_out/g1p_fem.gph", replace
-lpoly hpcs age_fbirth if fem==0, name(g1p_male) graphregion(fcolor(white)) jitter(30) ci ytitle("Physical Health") msize(vtiny) title("Men")
-graph save Graph "$path_out/g1p_male.gph", replace
+*VISUALIZATIONS
+*Scatter over sex with continous age at frist birth
+*physical 
+tw (scatter hpcs age_fbirth, name(a, replace) jitter(10) msize(tiny) mcolor(emidblue) graphregion(fcolor(white)) title("Women")) (lpolyci hpcs age_fbirth if fem == 1, lwidth(medium) lcolor(cranberry) ytitle("Physical Health") xtitle("Age at first Birth"))
+tw (scatter hpcs age_fbirth, name(b, replace) jitter(10) msize(tiny) mcolor(emidblue) graphregion(fcolor(white)) title("Men")) (lpolyci hpcs age_fbirth if fem == 0, lwidth(medium) lcolor(cranberry) ytitle("Physical Health") xtitle("Age at first Birth"))
 *mental
-lpoly hmcs age_fbirth if fem==1, name(g1m_fem) graphregion(fcolor(white)) jitter(30) ci ytitle("Mental Health") msize(vtiny) title("Women")
-graph save Graph "$path_out/g1m_fem.gph", replace
-lpoly hmcs age_fbirth if fem==0, name(g1p_male) graphregion(fcolor(white)) jitter(30) ci ytitle("Mental Health") msize(vtiny) title("Men")
-graph save Graph "$path_out/g1mm_male.gph", replace
-*combine graphs
-graph combine g1p_fem g1p_male g1m_fem g1mm_male
-graph save Graph "$path_out/g1.gph", replace
+tw (scatter hmcs age_fbirth, name(c, replace) jitter(10) msize(tiny) mcolor(dkorange) graphregion(fcolor(white)) title("Women")) (lpolyci hmcs age_fbirth if fem == 1, lwidth(medium) lcolor(cranberry) ytitle("Mental Health") xtitle("Age at first Birth"))
+tw (scatter hmcs age_fbirth, name(d, replace) jitter(10) msize(tiny) mcolor(dkorange) graphregion(fcolor(white)) title("Men")) (lpolyci hmcs age_fbirth if fem == 0, lwidth(medium) lcolor(cranberry) ytitle("Mental Health") xtitle("Age at first Birth"))
+graph combine a b c d, ycommon col(2) 
+*graph save Graph "$path_out/scatter_abcd.gph", replace
 
+*grmeanby with age groups
+grmeanby fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5, sum(hpcs)
+grmeanby fbirth_dum1 fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5, sum(hmcs)
+
+
+*REEGRESSION ANALYSIS
+regress hmcs age_fbirth if fem == 1
+regress hmcs age_fbirth if fem == 0
+regress hpcs age_fbirth if fem == 1
+regress hpcs age_fbirth if fem == 0
+mean hpcs, over(agegroup_fbirth)
+reg hmcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 if fem == 1
+reg hmcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 if fem == 0
+* --> no relationship for mental health and age_fbirth
+* --> only early first birth has significant association
+
+
+*Regression with Dummies
+* check for relevant moderators using beta coefficients
+*Women
+reg hpcs early_fbirth_w if fem == 1
+eststo a
+reg hpcs early_fbirth_w parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good if fem == 1
+eststo b
+*Men
+reg hpcs early_fbirth_m if fem == 0
+eststo c
+reg hpcs early_fbirth_m parentstress_high parentsupport_partner_high parentsupport_social_high childcare_sat_avg onek_bfed married_cohab yeduc employed moneystress hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good if fem == 0
+eststo d
+esttab a b c d using "$path_out/abcd.rtf", replace not nonumbers legend stats(r2_a N, fmt (2 0) labels("korr. R²""n"))  dmarker(,) label mtitle addnote("Data: Pairfam wave 7, own calculations") starlevel (* 0.05 ** 0.01 *** 0.001) rename(_cons "Constant") beta
+*--> relevant factors: parentstress_high employed moneystress sport1 weight_high h_childhood_good onek_bfed
+*Reduced Model
+*Women
+reg hpcs early_fbirth_w if fem == 1
+eststo a
+reg hpcs early_fbirth_w employed moneystress if fem == 1
+eststo b
+reg hpcs early_fbirth_w employed moneystress sport1 weight_high h_childhood_good onek_bfed if fem == 1
+eststo c
+*Men
+reg hpcs early_fbirth_m if fem == 0
+eststo d
+reg hpcs early_fbirth_m employed moneystress if fem == 0
+eststo e
+reg hpcs early_fbirth_m employed moneystress sport1 weight_high h_childhood_good onek_bfed if fem == 0
+eststo f
+esttab a b c d e f using "$path_out/abcdef.rtf", replace not nonumbers legend stats(r2_a N, fmt (2 0) labels("korr. R²""n"))  dmarker(,) label mtitle addnote("Data: Pairfam wave 7, own calculations") starlevel (* 0.05 ** 0.01 *** 0.001) rename(_cons "Constant")
+
+
+
+
+
+
+
+
+*****************************************************************************************************************************************************
+* do the factor check for parents vs childless too! is relationship status really a thing!?
+
+
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 if fem == 1
+eststo a
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab if fem == 1
+eststo b
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab yeduc if fem == 1
+eststo c
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab employed if fem == 1
+eststo d
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab employed hhincnet if fem == 1
+eststo e
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab employed hhincnet nsmoking_all sport1 sleep if fem == 1
+eststo f
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 married_cohab employed hhincnet nsmoking_all sport1 sleep weight_high h_childhood_good if fem == 1
+eststo g
+esttab a b c d e f g  using "$path_out/efghijkwomenbeta.rtf", replace not nonumbers legend stats(r2_a N, fmt (2 0) labels("korr. R²""n"))  dmarker(,) label mtitle addnote("Data: Pairfam wave 7, own calculations") starlevel (* 0.05 ** 0.01 *** 0.001) rename(_cons "Constant") beta
+
+*REDUCED
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 if fem == 1
+eststo a
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 yeduc if fem == 1
+eststo c
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 yeduc employed if fem == 1
+eststo d
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 yeduc employed hhincnet if fem == 1
+eststo e
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 yeduc employed hhincnet weight_high h_childhood_good if fem == 1
+eststo g
+esttab a b c d e f g  using "$path_out/efghijkwomenbeta".rtf, replace not nonumbers legend stats(r2_a N, fmt (2 0) labels("korr. R²""n"))  dmarker(,) label mtitle addnote("Data: Pairfam wave 7, own calculations") starlevel (* 0.05 ** 0.01 *** 0.001) rename(_cons "Constant") beta
+
+
+
+*Men
+
+
+
+
+
+
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 if fem == 0
+eststo i
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 yeduc if fem == 0
+eststo j
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 employed if fem == 0
+eststo k
+reg hpcs fbirth_dum1 fbirth_dum2 fbirth_dum4 fbirth_dum5 employed hhinc_net  if fem == 0
+eststo l
+
+esttab e f g h i j k l using efghijkl.rtf, replace not nonumbers legend stats(r2_a N, fmt (2 0) labels("korr. R²""n"))  dmarker(,) label mtitle addnote("Data: Pairfam wave 7, own calculations") starlevel (* 0.05 ** 0.01 *** 0.001) rename(_cons "Constant")
+
+
+
+
+
+
+*-------------------------------------------------------------------------------------------------------*
 
 *Examining patterns of missing data for covariables 
 misschk fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 h_childhood smoking uni seek, gen(miss_co3) replace
-
-
-*Regression
-reg hpcs fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5
-reg hmcs fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5
 
 reg hpcs fbirth_dum2 fbirth_dum3 fbirth_dum4 fbirth_dum5 if miss_co3number==0, beta
 eststo r31p
@@ -347,9 +480,6 @@ graph save Graph "$path_out/m3.gph", replace
 * Zwei Grafiken gemeinsam abbilden
 graph combine m2 m3
 graph save Graph "$path_out/m_2to3.gph", replace
-
-
-
 
 
 

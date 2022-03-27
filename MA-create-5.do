@@ -487,14 +487,17 @@ label var fbirth_dum3 "27-30"
 label var fbirth_dum4 "31-34" 
 label var fbirth_dum5 "35-43" 
 tab fbirth_dum1
-*Dummy for early first birth up until 22 (both genders), including childless
+*Dummy for early first birth up until 22 (both genders), not including childless
 gen early_fbirth = 1 if fbirth_dum1 == 1
-replace early_fbirth = 0 if early_fbirth == .
 * attach labels 
 label var early_fbirth "early first birth: -22"
 label define vnoyes 0"no" 1"yes" 
 label values early_fbirth vnoyes
 tab early_fbirth
+* new dummy for early first birth women: early_fbirth_w 15-22
+gen early_fbirth_w = fbirth_dum1 if sex_gen == 2
+* new dummy for early first birth men: early_fbirth_m 13-26
+gen early_fbirth_m = fbirth_dum1 + fbirth_dum2 if sex_gen == 1
 
 
 sum age_fbirth if age_fbirth < 20 & sex_gen == 2
@@ -812,6 +815,12 @@ label var sum_allk_agegroup5 "19-30"
 *Visualize distribution
 graph use "/Users/lisa/Documents/0 - Uni Halle/7 MASTERARBEIT/8 Grafik/Graph-kids_per_agegroup.gph"
 
+
+*HAVING BABY OR INFANT 
+*104 parents left
+gen has_infant = 1 if k1age <= 1 | k2age <= 1 | k3age <= 1 | k4age <= 1 | k5age <= 1 | k6age <= 1 | k7age<= 1 | k8age <= 1 | k9age <= 1 | k10age <= 1
+replace has_infant = 0 if parents == 0
+tab has_infant
 
 
 *****+--------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 #  Examining the Relationship between Fertility Patterns and Midlife Health in Germany 
+## (Master Thesis, Sociology)
 
 Can a certain pattern of having children or remaining childless have direct impacts on physical and mental health of women and men in midlife? Is there something like an ideal ‘fertility behaviour’ that is generally advisable for women and men when it comes to health outcomes in Germany?
 
